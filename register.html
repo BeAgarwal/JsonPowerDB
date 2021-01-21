@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>L2E Mini Project</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+    <center><h1>Registration</h1></center>
+    <form action="" method="post">
+        <table border="0" align="center">
+            <tbody>
+                <tr>
+                    <td><label for="name">Full Name: </label></td>
+                    <td><input id="name" maxlength="50" name="name" type="text" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="course">Course: </label></td>
+                    <td><input id="course" maxlength="50" name="course" type="text" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="branch">Branch: </label></td>
+                    <td><input id="branch" maxlength="50" name="branch" type="text" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="rollno">Roll no: </label></td>
+                    <td><input id="rollno" maxlength="50" name="rollno" type="text" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="email">Email Address:</label></td>
+                    <td><input id="email" maxlength="50" name="email" type="text" /></td>
+                </tr>
+
+                <tr>
+                    <td><label for="password">Password:</label></td>
+                    <td><input id="password" maxlength="50" name="password"
+                               type="password" /></td>
+                </tr>
+
+                <tr>
+                    <td align="right"><input type="button" value="Register" onclick="registerCandidate();"/></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </form>
+
+    <script>
+        function createPUTRequest(connToken, jsonObj, dbName, relName) {
+            var putRequest = "{\n"
+                    + "\"token\" : \""
+                    + connToken
+                    + "\","
+                    + "\"dbName\": \""
+                    + dbName
+                    + "\",\n" + "\"cmd\" : \"PUT\",\n"
+                    + "\"rel\" : \""
+                    + relName + "\","
+                    + "\"jsonStr\": \n"
+                    + jsonObj
+                    + "\n"
+                    + "}";
+            return putRequest;
+        }
+        function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+            var url = dbBaseUrl + apiEndPointUrl;
+            var jsonObj;
+            $.post(url, reqString, function (result) {
+                jsonObj = JSON.parse(result);
+            }).fail(function (result) {
+                var dataJsonObj = result.responseText;
+                jsonObj = JSON.parse(dataJsonObj);
+            });
+            return jsonObj;
+        }
+
+        function validateAndGetFormData() {
+            
+            var name = document.getElementById("name").value;
+            var course = document.getElementById("course").value;
+            var branch = document.getElementById("branch").value;
+            var roll = document.getElementById("rollno").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            
+            var jsonStrObj = {
+                CandidateName: name,
+                Course: course,
+                Branch: branch,
+                RollNo: roll,
+                Email: email,
+                Password: password,
+            };
+            return JSON.stringify(jsonStrObj);
+        }
+
+        function registerCandidate() {
+
+            var jsonStr = validateAndGetFormData();
+            if (jsonStr === "") {
+                return;
+            }
+            var putReqStr = createPUTRequest("",
+                    jsonStr, "CourseData", "Candidate-Data");
+            alert(putReqStr);
+            jQuery.ajaxSetup({async: false});
+            var resultObj = executeCommand(putReqStr,
+                    "http://api.login2explore.com:5577", "/api/iml");
+            jQuery.ajaxSetup({async: true});
+            alert( "INSERTED "+JSON.stringify(resultObj));
+
+        }
+    </script>
+</body>
+</html>
