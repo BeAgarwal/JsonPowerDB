@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>L2E Mini Project</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="http://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+
+    </head>
+    <body>
+    <center><h1>Delete Data</h1></center>
+    <center><input id="rollno" maxlength="50" placeholder="Roll No" name="rollno" type="text" /><br><br>
+        <input type="button" value="DELETE DATA" onclick="deleteData();"/></center>
+    <p id="show"></p>
+    <script>
+        function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+            var url = dbBaseUrl + apiEndPointUrl;
+            var jsonObj;
+            $.post(url, reqString, function (result) {
+                jsonObj = JSON.parse(result);
+            }).fail(function (result) {
+                var dataJsonObj = result.responseText;
+                jsonObj = JSON.parse(dataJsonObj);
+            });
+            return jsonObj;
+        }
+        function deleteData(){
+            var token = "90937136|";
+            var dbname = "CourseData";
+            var relationName = "Candidate-Data";
+            var roll = parseInt(document.getElementById("rollno").value);
+
+            var reqString = createREMOVERecordRequest(token, dbname, relationName, roll);
+            alert(reqString);
+            jQuery.ajaxSetup({async: false});
+            var resultObj = executeCommand(reqString,
+                    "http://api.login2explore.com:5577", "/api/iml");
+            jQuery.ajaxSetup({async: true});
+            alert(JSON.stringify(resultObj));
+            
+        }
+    </script>
+    </body>
+</html>
